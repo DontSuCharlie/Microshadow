@@ -27,10 +27,9 @@ import java.util.List;
 /*
  * HOW TO USE
  * ARDiscoveryDevice device = FindDrones.findDrones();
- * 
+ *
  */
 public class FindDrones implements ARDiscoveryServicesDevicesListUpdatedReceiverDelegate {
-    private List<String>
     private static final String TAG = MainActivity.class.getSimpleName();
     private ARDiscoveryServicesDevicesListUpdatedReceiver receiver;//some long ass variable
     private ARDiscoveryService discoveryService;//an object for discovering the AR drone

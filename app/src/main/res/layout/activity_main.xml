@@ -9,8 +9,73 @@
     android:paddingTop="@dimen/activity_vertical_margin"
     tools:context="hackillinois2016.microshadow.MainActivity">
 
-    <TextView
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:text="Hello World!" />
+    <LinearLayout
+        android:orientation="vertical"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent">
+
+        <TableRow
+            android:layout_width="match_parent"
+            android:layout_height="140dp">
+
+
+            <ImageView
+                android:layout_width="wrap_content"
+                android:layout_height="100dp"
+                android:scaleType="centerCrop"
+                android:background="@drawable/title"
+                android:id="@+id/imageView" />
+        </TableRow>
+
+        <TableRow
+            android:layout_width="match_parent"
+            android:layout_height="140dp">
+
+            <Button
+                android:layout_width="match_parent"
+                android:layout_height="111dp"
+                android:text="Connect to Band"
+                android:id="@+id/btnConnect" />
+
+        </TableRow>
+
+        <TableRow
+            android:layout_width="match_parent"
+            android:layout_height="140dp">
+
+            <Button
+                android:layout_width="fill_parent"
+                android:layout_height="111dp"
+                android:text="Launch Drone"
+                android:id="@+id/btnLaunch" />
+        </TableRow>
+
+        <TableRow
+            android:layout_width="match_parent"
+            android:layout_height="140dp">
+
+            <Button
+                android:layout_width="fill_parent"
+                android:layout_height="111dp"
+                android:text="Begin Following"
+                android:id="@+id/btnFollow" />
+        </TableRow>
+
+        <TableRow
+            android:layout_width="match_parent"
+            android:layout_height="250dp">
+
+
+            <TextView
+                android:layout_width="match_parent"
+                android:layout_height="250dp"
+                android:textAppearance="?android:attr/textAppearanceMedium"
+                android:text="Data"
+                android:gravity="center"
+                android:textSize="36sp"
+                android:id="@+id/textStatus"
+                 />
+        </TableRow>
+
+    </LinearLayout>
 </RelativeLayout>
