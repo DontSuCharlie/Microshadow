@@ -72,7 +72,7 @@ public class FindDrones extends Activity implements ARDiscoveryServicesDevicesLi
                 public void onServiceDisconnected(ComponentName name) {
                     discoveryService = null;
                 }
-            }
+            };
         }
         //if it was discoveryService that was null, we do the following
         if(discoveryService == null)
