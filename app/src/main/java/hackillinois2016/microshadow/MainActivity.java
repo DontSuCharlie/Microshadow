@@ -2,6 +2,8 @@ package hackillinois2016.microshadow;
 
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
+import com.microsoft.band.BandClient;
+
 
 public class MainActivity extends AppCompatActivity {
 
