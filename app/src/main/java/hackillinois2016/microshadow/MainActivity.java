@@ -23,6 +23,7 @@ import android.widget.TextView;
 
 public class MainActivity extends Activity {
 
+    //lol
     private BandClient client = null;
     private Button btnConnect;
     private TextView txtStatus;
