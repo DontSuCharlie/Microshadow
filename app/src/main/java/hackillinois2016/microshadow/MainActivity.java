@@ -12,6 +12,8 @@ import com.microsoft.band.ConnectionState;
 import com.microsoft.band.sensors.BandAccelerometerEvent;
 import com.microsoft.band.sensors.BandAccelerometerEventListener;
 import com.microsoft.band.sensors.SampleRate;
+import com.parrot.arsdk.ARSDK;
+import com.parrot.arsdk.ardiscovery.ARDiscoveryDeviceService;
 
 import android.os.Bundle;
 import android.view.View;
@@ -21,14 +23,16 @@ import android.view.View.OnClickListener;
 import android.widget.Button;
 import android.widget.TextView;
 
+import java.util.List;
+
 public class MainActivity extends Activity {
 
-    //lol
     private BandClient client = null;
     private Button btnConnect;
     private TextView txtStatus;
     private FindDrones finder;
     private DroneCommands commander;
+    private List<ARDiscoveryDeviceService> deviceList;
 
     private BandAccelerometerEventListener mAccelerometerEventListener = new BandAccelerometerEventListener() {
         @Override
@@ -42,9 +46,11 @@ public class MainActivity extends Activity {
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
+        System.out.println("onCreate");
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
 
+        ARSDK.loadSDKLibs();
         txtStatus = (TextView) findViewById(R.id.textStatus);
         btnConnect = (Button) findViewById(R.id.btnConnect);
         btnConnect.setOnClickListener(new OnClickListener() {
@@ -54,13 +60,15 @@ public class MainActivity extends Activity {
                 new AccelerometerSubscriptionTask().execute();
             }
         });
-        finder = new FindDrones();
-        commander = new DroneCommands(finder.findDrone());
+        finder = new FindDrones(getApplicationContext(), deviceList);
+        //commander = new DroneCommands(finder.findDrone());
         //commander.takeoff();
     }
 
     @Override
     protected void onResume() {
+        System.out.println("onResume");
+        finder = new FindDrones(getApplicationContext(), deviceList);
         super.onResume();
         txtStatus.setText("");
     }
