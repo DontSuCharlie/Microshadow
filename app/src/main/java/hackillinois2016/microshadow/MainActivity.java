@@ -26,6 +26,8 @@ public class MainActivity extends Activity {
     private BandClient client = null;
     private Button btnConnect;
     private TextView txtStatus;
+    private FindDrones finder;
+    private DroneCommands commander;
 
     private BandAccelerometerEventListener mAccelerometerEventListener = new BandAccelerometerEventListener() {
         @Override
@@ -51,6 +53,9 @@ public class MainActivity extends Activity {
                 new AccelerometerSubscriptionTask().execute();
             }
         });
+        finder = new FindDrones();
+        commander = new DroneCommands(finder.findDrone());
+        //commander.takeoff();
     }
 
     @Override

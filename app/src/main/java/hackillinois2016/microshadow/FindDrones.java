@@ -173,6 +173,7 @@ public class FindDrones extends Activity implements ARDiscoveryServicesDevicesLi
                 e.printStackTrace();
             }
         }
+        System.out.println("Success! A drone has been found!");
         unregisterReceivers();
         closeServices();
         return createDiscoveryDevice(deviceService);
