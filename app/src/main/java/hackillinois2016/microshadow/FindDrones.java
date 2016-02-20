@@ -1,5 +1,6 @@
 package hackillinois2016.microshadow;
 
+import android.app.Activity;
 import android.content.ComponentName;
 import android.content.Context;
 import android.content.Intent;
@@ -11,6 +12,7 @@ import android.util.Log;
 
 import com.parrot.arsdk.ardiscovery.ARDISCOVERY_PRODUCT_ENUM;
 import com.parrot.arsdk.ardiscovery.ARDiscoveryDevice;
+import com.parrot.arsdk.ardiscovery.ARDiscoveryDeviceNetService;
 import com.parrot.arsdk.ardiscovery.ARDiscoveryDeviceService;
 import com.parrot.arsdk.ardiscovery.ARDiscoveryService;
 import com.parrot.arsdk.ardiscovery.receivers.ARDiscoveryServicesDevicesListUpdatedReceiver;
@@ -29,22 +31,35 @@ import java.util.List;
  * ARDiscoveryDevice device = FindDrones.findDrones();
  *
  */
-public class FindDrones implements ARDiscoveryServicesDevicesListUpdatedReceiverDelegate {
+
+/*
+    How this code works:
+    Our goal is to connect with a Parrot AR Drone.
+    1) They have provided something called the ARDiscoveryService, which will call onServicesDevicesListUpdated() whenever a drone has been detected
+    2) To use the ARDiscoveryService, we have to initialize a few things
+    3)
+
+    so
+    1) initialize the discovery service
+    2) start the discovery service
+    3) register the callback function
+    4) decide what to do with the callback
+    5) now that you have an object representing the connection between the app and drone, you turn it into a device object
+    6) clean up
+*/
+public class FindDrones extends Activity implements ARDiscoveryServicesDevicesListUpdatedReceiverDelegate {
+    private boolean droneDiscovered = false;
+    private ARDiscoveryService discoveryService;//an object for discovering the AR drone
+    private ServiceConnection discoveryServiceConnection;//an object representing the connection between the AR drone and the this application
+    private ARDiscoveryDeviceService deviceService;//an object that will be converted into a device
     private static final String TAG = MainActivity.class.getSimpleName();
     private ARDiscoveryServicesDevicesListUpdatedReceiver receiver;//some long ass variable
-    private ARDiscoveryService discoveryService;//an object for discovering the AR drone
-    private ServiceConnection discoveryServiceConnection;//an object representing the connection between the AR drone and the thin
-
-    //if there is no service, we start discovery service for some reason
-    private void startDiscovery()
-    {
-        if(discoveryService != null)
-            discoveryService.start();
-    }
 
 
+    //initializes the discoveryServiceConnection and discoveryService objects
     private void initDiscoveryService()
-    {
+    {//we need to establish a connection first to start discovery service for some reason
+        //if the discoveryServiceConnection was null, we do the following
         if(discoveryServiceConnection == null)
         {
             discoveryServiceConnection = new ServiceConnection() {
@@ -59,6 +74,7 @@ public class FindDrones implements ARDiscoveryServicesDevicesListUpdatedReceiver
                 }
             }
         }
+        //if it was discoveryService that was null, we do the following
         if(discoveryService == null)
         {
             Intent i = new Intent(getApplicationContext(), ARDiscoveryService.class);
@@ -68,6 +84,14 @@ public class FindDrones implements ARDiscoveryServicesDevicesListUpdatedReceiver
             startDiscovery();
     }
 
+    //once the discoveryService has been initialized, we start discovery (looking for drones)
+    private void startDiscovery()
+    {
+        if(discoveryService != null)
+            discoveryService.start();
+    }
+
+    //we want to register the callback function
     private void registerReceivers()
     {
         receiver = new ARDiscoveryServicesDevicesListUpdatedReceiver(this);
@@ -75,14 +99,21 @@ public class FindDrones implements ARDiscoveryServicesDevicesListUpdatedReceiver
         localBroadcastManager.registerReceiver(receiver, new IntentFilter(ARDiscoveryService.kARDiscoveryServiceNotificationServicesDevicesListUpdated));
     }
 
+    //now we want to implement the callback function
     @Override
     public void onServicesDevicesListUpdated()
     {
-        Log.d(TAG, "onServicesDevicesListUpdated...");
+       // Log.d(TAG, "onServicesDevicesListUpdated...");
         if(discoveryService!=null)
         {
             List<ARDiscoveryDeviceService> deviceList = discoveryService.getDeviceServicesArray();
-            //do what I want with the list? What's the list event of?
+            droneDiscovered = true;
+            //if it turned out that we didn't really discover anything, we say droneDiscovered = false again
+            //otherwise we set deviceSErvice as the first element of the list
+            if(deviceList.size() > 0)
+                deviceService = deviceList.get(0);
+            else
+                droneDiscovered = false;
         }
     }
 
@@ -92,9 +123,58 @@ public class FindDrones implements ARDiscoveryServicesDevicesListUpdatedReceiver
         ARDiscoveryDevice device = null;
         if ((service != null) && (ARDISCOVERY_PRODUCT_ENUM.ARDISCOVERY_PRODUCT_ARDRONE.equals(ARDiscoveryService.getProductFromProductID(service.getProductID()))))
         {
-
+            try
+            {
+                device = new ARDiscoveryDevice();
+                ARDiscoveryDeviceNetService netDeviceService = (ARDiscoveryDeviceNetService) service.getDevice();
+                device.initWifi(ARDISCOVERY_PRODUCT_ENUM.ARDISCOVERY_PRODUCT_ARDRONE, netDeviceService.getName(), netDeviceService.getIp(), netDeviceService.getPort());
+            }
+            catch(Exception e)
+            {
+                e.printStackTrace();
+            }
         }
-
+        return device;
     }
 
+    private void unregisterReceivers()
+    {
+        LocalBroadcastManager localBroadcastManager = LocalBroadcastManager.getInstance(getApplicationContext());
+        localBroadcastManager.unregisterReceiver(receiver);
+    }
+
+    private void closeServices()
+    {
+        if(discoveryService!=null)
+        {
+            new Thread(new Runnable(){
+                @Override
+                public void run()
+                {
+                    discoveryService.stop();
+                    getApplicationContext().unbindService(discoveryServiceConnection);
+                    discoveryService = null;
+                }
+            }).start();
+        }
+    }
+    public ARDiscoveryDevice findDrone()
+    {
+        registerReceivers();
+        initDiscoveryService();
+        while(!droneDiscovered)
+        {
+            try
+            {
+                Thread.sleep(100);
+            }
+            catch(Exception e)
+            {
+                e.printStackTrace();
+            }
+        }
+        unregisterReceivers();
+        closeServices();
+        return createDiscoveryDevice(deviceService);
+    }
 }
