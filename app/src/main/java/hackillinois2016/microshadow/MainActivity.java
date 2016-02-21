@@ -67,8 +67,8 @@ public class MainActivity extends Activity {
 
     @Override
     protected void onResume() {
-        System.out.println("onResume");
-        finder = new FindDrones(getApplicationContext(), deviceList);
+        //System.out.println("onResume");
+        //finder = new FindDrones(getApplicationContext(), deviceList);
         super.onResume();
         txtStatus.setText("");
     }

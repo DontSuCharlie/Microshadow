@@ -73,7 +73,7 @@ public class FindDrones implements ARDiscoveryServicesDevicesListUpdatedReceiver
     private void initDiscoveryService()
     {//we need to establish a connection first to start discovery service for some reason
         //if the discoveryServiceConnection was null, we do the following
-        System.out.printf("discoveryServiceConnection: %s\n", discoveryServiceConnection);
+        Log.d("FindDrones","Discovery Service Connecton "+discoveryServiceConnection);
         if(discoveryServiceConnection == null)
         {
             discoveryServiceConnection = new ServiceConnection() {
@@ -88,20 +88,24 @@ public class FindDrones implements ARDiscoveryServicesDevicesListUpdatedReceiver
                 }
             };
         }
+        Log.d("FindDrones","Discovery Service " + discoveryService);
+
         //if it was discoveryService that was null, we do the following
         if(discoveryService == null)
         {
+            Log.d("FindDrones", "Discovery Connection (inside if) " + discoveryServiceConnection);
             Intent i = new Intent(currentContext, ARDiscoveryService.class);
             currentContext.bindService(i, discoveryServiceConnection, Context.BIND_AUTO_CREATE);
         }
-        else
+        else {
             startDiscovery();
+        }
     }
 
     //once the discoveryService has been initialized, we start discovery (looking for drones)
     private void startDiscovery()
     {
-        System.out.println("started discovery");
+        Log.d("FindDrones","Start Discovery");
         if(discoveryService != null)
             discoveryService.start();
     }
@@ -118,7 +122,7 @@ public class FindDrones implements ARDiscoveryServicesDevicesListUpdatedReceiver
     @Override
     public void onServicesDevicesListUpdated()
     {
-        System.out.println("Discovered a device!");
+        Log.d("FindDrones", "Discovered device");
         if(discoveryService!=null)
         {
             List<ARDiscoveryDeviceService> deviceList = discoveryService.getDeviceServicesArray();
