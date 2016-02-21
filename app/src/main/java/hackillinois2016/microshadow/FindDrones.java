@@ -177,4 +177,24 @@ public class FindDrones implements ARDiscoveryServicesDevicesListUpdatedReceiver
             }).start();
         }
     }
+    public ARDiscoveryDevice findDrone()
+    {
+        initDiscoveryService();
+        registerReceivers();
+        while(!droneDiscovered)
+        {
+            try
+            {
+                Thread.sleep(100);
+            }
+            catch(Exception e)
+            {
+                e.printStackTrace();
+            }
+        }
+        System.out.println("Success! A drone has been found!");
+        unregisterReceivers();
+        closeServices();
+        return createDiscoveryDevice(deviceService);
+    }
 }
