@@ -57,8 +57,9 @@ public class DroneCommands implements ARDeviceControllerListener {
                 e.printStackTrace();
             }
 
-            return flyingState;
+
         }
+        return flyingState;
     }
 
     public void takeoff()

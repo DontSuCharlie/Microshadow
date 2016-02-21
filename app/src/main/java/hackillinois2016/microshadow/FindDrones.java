@@ -160,8 +160,8 @@ public class FindDrones extends Activity implements ARDiscoveryServicesDevicesLi
     }
     public ARDiscoveryDevice findDrone()
     {
-        registerReceivers();
         initDiscoveryService();
+        registerReceivers();
         while(!droneDiscovered)
         {
             try
