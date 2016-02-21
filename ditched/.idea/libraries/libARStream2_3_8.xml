@@ -1,0 +1,12 @@
+<component name="libraryTable">
+  <library name="libARStream2-3.8">
+    <CLASSES>
+      <root url="file://$PROJECT_DIR$/app/build/intermediates/exploded-aar/com.parrot/libARStream2/3.8/res" />
+      <root url="jar://$PROJECT_DIR$/app/build/intermediates/exploded-aar/com.parrot/libARStream2/3.8/jars/classes.jar!/" />
+    </CLASSES>
+    <JAVADOC />
+    <SOURCES>
+      <root url="jar://$USER_HOME$/.gradle/caches/modules-2/files-2.1/com.parrot/libARStream2/3.8/7855e6e29c5c67d43ae0362bab07f1c3400a0fac/libARStream2-3.8-sources.jar!/" />
+    </SOURCES>
+  </library>
+</component>
